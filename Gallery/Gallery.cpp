@@ -2,8 +2,9 @@
 #include <string>
 #include "MemoryAccess.h"
 #include "AlbumManager.h"
+#include <ctime>
 
-
+void printMenu();
 int getCommandNumberFromUser()
 {
 	std::string message("\nPlease enter any command(use number): ");
@@ -36,10 +37,10 @@ int main(void)
 	// initialize album manager
 	AlbumManager albumManager(dataAccess);
 
-
 	std::string albumName;
-	std::cout << "Welcome to Gallery!" << std::endl;
-	std::cout << "===================" << std::endl;
+
+	printMenu();
+
 	std::cout << "Type " << HELP << " to a list of all supported commands" << std::endl;
 	
 	do {
@@ -54,4 +55,21 @@ int main(void)
 	while (true);
 }
 
+/*
+this function prints the menu.
+input: none.
+output: none.
+*/
+void printMenu()
+{
+	std::cout << "   Welcome to Gallery!" << std::endl;
+	std::cout << "=========================" << std::endl;
+	std::cout << "|Developer: Harel Mazar.|" << std::endl;
 
+	std::time_t t = std::time(0);   // get time now
+
+	std::tm* now = std::localtime(&t);
+	std::cout << "|Current date: " << now->tm_mday << '/' << (now->tm_mon + 1) << '/' << (now->tm_year + 1900) << "|" << std::endl;
+	std::cout << "|Current hour: " << now->tm_hour << ":" << now->tm_min << "    |" << std::endl;
+	std::cout << "=========================" << std::endl;
+}
