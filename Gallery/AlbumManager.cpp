@@ -337,7 +337,8 @@ void AlbumManager::userStatistics()
 	std::cout << "user @" << userId << " Statistics:" << std::endl << "--------------------" << std::endl <<
 		"  + Count of Albums Tagged: " << m_dataAccess.countAlbumsTaggedOfUser(user) << std::endl <<
 		"  + Count of Tags: " << m_dataAccess.countTagsOfUser(user) << std::endl <<
-		"  + Avarage Tags per Alboum: " << m_dataAccess.averageTagsPerAlbumOfUser(user) << std::endl;
+		"  + Avarage Tags per Alboum: " << m_dataAccess.averageTagsPerAlbumOfUser(user) << std::endl <<
+		"  + Owned Albums: " << m_dataAccess.countAlbumsOwnedOfUser(user) << std::endl;
 }
 
 
