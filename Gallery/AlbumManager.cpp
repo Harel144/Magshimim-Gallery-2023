@@ -309,6 +309,12 @@ void AlbumManager::removeUser()
 		closeAlbum();
 	}
 
+	const std::list<Album>& albums = m_dataAccess.getAlbumsOfUser(user);
+
+	for (const auto& album : albums) {
+		m_dataAccess.deleteAlbum(album.getName(), userId);
+	}
+
 	m_dataAccess.deleteUser(user);
 	std::cout << "User @" << userId << " deleted successfully." << std::endl;
 }
