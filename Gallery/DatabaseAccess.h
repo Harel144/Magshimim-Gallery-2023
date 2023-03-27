@@ -1,5 +1,7 @@
 #pragma once
 #include "IDataAccess.h"
+#include "sqlite3.h"
+#include <fstream>
 
 class DatabaseAccess : public IDataAccess
 {
