@@ -60,3 +60,41 @@ void DatabaseAccess::close()
 	sqlite3_close(this->_db);
 	this->_db = nullptr;
 }
+
+
+/*============================\
+							  |
+	ALBUM RELATED FUNCTIONS   |
+							  |
+\============================*/
+
+
+/*
+this function close an open album.
+input: album to close.
+output: none.
+*/
+void DatabaseAccess::closeAlbum(Album& pAlbum)
+{
+	delete &pAlbum;
+}
+
+/*
+this function deletes an album from the database.
+input: album's name, owner id.
+output: none.
+*/
+void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
+{
+	const std::string sqlStatement = "DELETE FROM ALBUMS WHERE USER_ID = " + std::to_string(userId) + " AND NAME = " + albumName + ";";
+	
+	char** errMessage = nullptr;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cout << "Error! couldn't deleted album " << albumName << "!";
+	}
+}
+
