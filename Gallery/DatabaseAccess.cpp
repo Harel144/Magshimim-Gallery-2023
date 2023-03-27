@@ -50,3 +50,13 @@ bool DatabaseAccess::open()
 	return true;
 }
 
+/*
+this funcion closes the access to the database. 
+input: none.
+output: none.
+*/
+void DatabaseAccess::close()
+{
+	sqlite3_close(this->_db);
+	this->_db = nullptr;
+}
