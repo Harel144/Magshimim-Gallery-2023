@@ -7,7 +7,6 @@ output: true if opened successfully and false otherwise.
 */
 bool DatabaseAccess::open()
 {
-	sqlite3* db;
 	std::string dbFileName = "Gallery.sqlite";
 	std::ifstream checkExistence;
 
@@ -21,11 +20,11 @@ bool DatabaseAccess::open()
 
 	checkExistence.close();
 
-	int res = sqlite3_open(dbFileName.c_str(), &db);
+	int res = sqlite3_open(dbFileName.c_str(), &this->_db);
 
 	if (res != SQLITE_OK)
 	{
-		db = nullptr;
+		this->_db = nullptr;
 		std::cout << "Failed to open DB" << std::endl;
 		return false;
 	}
@@ -39,7 +38,7 @@ bool DatabaseAccess::open()
 			"CREATE TABLE IF NOT EXISTS Pictures(ID int PRIMARY KEY, NAME TEXT, CREATION_DATE TEXT, LOCATION TEXT, ALBUM_ID int, FOREIGN KEY(ALBUM_ID) REFERENCES ALBUM(ID));"
 			"CREATE TABLE IF NOT EXISTS TAGS(ID int PRIMARY KEY, PICTURE_ID int, USER_ID int, FOREIGN KEY(PICTURE_ID) REFERENCES PICTURES(ID), FOREIGN KEY(USER_ID) REFERENCES USERS(ID));";
 
-		res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, errMessage);
+		res = sqlite3_exec(this->_db, sqlStatement, nullptr, nullptr, errMessage);
 
 		if (res != SQLITE_OK)
 		{
@@ -50,3 +49,4 @@ bool DatabaseAccess::open()
 
 	return true;
 }
+

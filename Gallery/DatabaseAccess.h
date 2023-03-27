@@ -45,4 +45,7 @@ class DatabaseAccess : public IDataAccess
 		virtual void close() override;
 		virtual void clear() override;
 
+private:
+	sqlite3* _db;
+
 };
