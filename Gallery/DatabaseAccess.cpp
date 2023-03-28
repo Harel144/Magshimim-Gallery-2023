@@ -1,6 +1,18 @@
 #include "DatabaseAccess.h"
 
 /*
+this function returns the first argument a sql table is giving.
+input: pointer to data from outside, amount of columns, data of columns and name of columns
+output: 0.
+*/
+int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
+{
+	std::string* strData = static_cast<std::string*>(data);
+	*strData = argv[0];
+	return 0;
+}
+
+/*
 this function opens the database. if database isn't existed, the function creates it.
 input: none.
 output: true if opened successfully and false otherwise.
@@ -127,7 +139,7 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	sqlStatement = "SELECT ID FROM PICTURES WHERE NAME = '" + pictureName + "' AND ALBUM_ID = " +  albumID + ";";
 	std::string pictureID;
 
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &pictureID, errMessage);
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &pictureID, errMessage);
 
 	if (res != SQLITE_OK)
 	{
@@ -147,16 +159,4 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	{
 		std::cout << "Tagges user at picture succsesfully!" << std::endl;
 	}
-}
-
-/*
-this function returns the first argument a sql table is giving.
-input: pointer to data from outside, amount of columns, data of columns and name of columns
-output: 0.
-*/
-int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
-{
-	std::string* strData = static_cast<std::string*>(data);
-	*strData = argv[0];
-	return 0;
 }

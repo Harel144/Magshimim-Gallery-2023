@@ -3,8 +3,12 @@
 #include "MemoryAccess.h"
 #include "AlbumManager.h"
 #include <ctime>
+#include <sstream>
+
 
 void printMenu();
+std::string getPaddedNumber(const int num, const int digits);
+
 int getCommandNumberFromUser()
 {
 	std::string message("\nPlease enter any command(use number): ");
@@ -63,13 +67,21 @@ output: none.
 void printMenu()
 {
 	std::cout << "   Welcome to Gallery!" << std::endl;
-	std::cout << "=========================" << std::endl;
-	std::cout << "|Developer: Harel Mazar.|" << std::endl;
+	std::cout << "==========================" << std::endl;
+	std::cout << "|Developer: Harel Mazar. |" << std::endl;
 
 	std::time_t t = std::time(0);   // get time now
 
 	std::tm* now = std::localtime(&t);
-	std::cout << "|Current date: " << now->tm_mday << '/' << (now->tm_mon + 1) << '/' << (now->tm_year + 1900) << "|" << std::endl;
-	std::cout << "|Current hour: " << now->tm_hour << ":" << now->tm_min << "    |" << std::endl;
-	std::cout << "=========================" << std::endl;
+	std::cout << "|Current date: " << getPaddedNumber(now->tm_mday, 2) << '/' << getPaddedNumber(now->tm_mon + 1, 2) << '/' << (now->tm_year + 1900) << "|" << std::endl;
+	std::cout << "|Current hour: " << getPaddedNumber(now->tm_hour, 2) << ":" << getPaddedNumber(now->tm_min, 2) << "     |" << std::endl;
+	std::cout << "==========================" << std::endl;
+}
+
+std::string getPaddedNumber(const int num, const int digits)
+{
+	std::ostringstream ostr;
+	ostr << std::setw(digits) << std::setfill('0') << num;
+	return ostr.str();
+
 }
