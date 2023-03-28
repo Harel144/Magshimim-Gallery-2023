@@ -143,6 +143,28 @@ void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 	}
 }
 
+/*
+this function checks if album is exist in ALBUMS table at the database.
+input: album name, owner id.
+output: true if the album exist and false otherwise.
+*/
+bool DatabaseAccess::doesAlbumExists(const std::string& albumName, int userId)
+{
+	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
+	char** errMessage = nullptr;
+	std::string albumID = "";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at opening " << albumName << "!, " << std::endl;
+		return;
+	}
+
+	return albumID == "";
+}
+
 
 /*==============================\
 							     |
