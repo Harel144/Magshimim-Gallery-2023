@@ -98,3 +98,65 @@ void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 	}
 }
 
+
+/*==============================\
+							     |
+	PICTURES RELATED FUNCTIONS   |
+							     |
+\==============================*/
+
+/*
+this function adds values to the TAGS table (aka tagging a user on a picture).
+input: name of album of the picture, name of the picture, user id.
+output: none.
+*/
+void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId)
+{
+	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
+	char** errMessage = nullptr;
+	std::string albumID;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get id of " << albumName << "!, " << std::endl;
+		return;
+	}
+
+	sqlStatement = "SELECT ID FROM PICTURES WHERE NAME = '" + pictureName + "' AND ALBUM_ID = " +  albumID + ";";
+	std::string pictureID;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &pictureID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get id of " << pictureName << "!" << std::endl;
+		return;
+	}
+
+	sqlStatement = "INSERT INTO TAGS(PICTURE_ID, USER_ID) VALUES( " +pictureID + ", " + std::to_string(userId) + ");";
+
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't tag user at " << pictureName << "!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Tagges user at picture succsesfully!" << std::endl;
+	}
+}
+
+/*
+this function returns the first argument a sql table is giving.
+input: pointer to data from outside, amount of columns, data of columns and name of columns
+output: 0.
+*/
+int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
+{
+	std::string* strData = static_cast<std::string*>(data);
+	*strData = argv[0];
+	return 0;
+}
