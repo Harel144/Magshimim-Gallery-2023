@@ -82,6 +82,33 @@ void DatabaseAccess::close()
 
 
 /*
+this function creates an album at ALBUMS table at the database.
+input: album object.
+output: none.
+*/
+void DatabaseAccess::createAlbum(const Album & album)
+{
+	std::string name = album.getName();
+	std::string creationDate = album.getCreationDate();
+	int ownerId = album.getOwnerId();
+
+	if (doesAlbumExists(name, ownerId))
+	{
+		std::cerr << "Album is already exist!" << std::endl;
+		return;
+	}
+
+	const std::string sqlStatement = "INSERT INTO ALBUMS(NAME, CREATION_DATE, USER_ID) VALUES('" + name + "','" + creationDate + "','" + std::to_string(ownerId) + "');";
+	char** errMessage = nullptr;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't create album." << name << "!" << std::endl;
+	}
+}
+
+/*
 this function close an open album.
 input: album to close.
 output: none.
@@ -98,6 +125,12 @@ output: none.
 */
 void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 {
+	if (!doesAlbumExists(albumName, userId))
+	{
+		std::cerr << "Album isn't exist!" << std::endl;
+		return;
+	}
+
 	const std::string sqlStatement = "DELETE FROM ALBUMS WHERE USER_ID = " + std::to_string(userId) + " AND NAME = " + albumName + ";";
 	
 	char** errMessage = nullptr;
@@ -106,7 +139,7 @@ void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 
 	if (res != SQLITE_OK)
 	{
-		std::cout << "Error! couldn't deleted album " << albumName << "!";
+		std::cerr << "Error! couldn't deleted album " << albumName << "!" << std::endl;
 	}
 }
 
@@ -124,6 +157,12 @@ output: none.
 */
 void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId)
 {
+	if (!doesAlbumExists(albumName, userId))
+	{
+		std::cerr << "Album doesn't exist!" << std::endl;
+		return;
+	}
+
 	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
 	char** errMessage = nullptr;
 	std::string albumID;
@@ -157,6 +196,6 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	}
 	else
 	{
-		std::cout << "Tagges user at picture succsesfully!" << std::endl;
+		std::cout << "Tagged user at picture succsesfully!" << std::endl;
 	}
 }
