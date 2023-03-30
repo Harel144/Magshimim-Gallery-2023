@@ -43,6 +43,7 @@ bool DatabaseAccess::open()
 		if (res != SQLITE_OK)
 		{
 			std::cout << errMessage;
+			close();
 			return false;
 		}
 	}
@@ -147,7 +148,7 @@ bool DatabaseAccess::doesAlbumExists(const std::string& albumName, int userId)
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error at opening " << albumName << "!, " << std::endl;
-		return;
+		return false;
 	}
 
 	return albumID == "";
@@ -170,11 +171,24 @@ const std::list<Album> DatabaseAccess::getAlbumsOfUser(const User& user)
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get albums of " << user.getName() << "!" << std::endl;
-		return;
 	}
 
 	return albums;
 }
+
+void DatabaseAccess::printAlbums()
+{
+	std::string sqlStatement = "SELECT ALBUMS.NAME, USERS.NAME FROM ALBUMS INNER JOIN USERS ON ALBUMS.USER_ID = USERS.ID;";
+	char** errMessage = nullptr;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackPrintAlbumsData, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't print albums!" << std::endl;
+	}
+}
+
 
 /*==============================\
 							     |

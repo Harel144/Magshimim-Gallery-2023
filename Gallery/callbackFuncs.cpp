@@ -78,3 +78,11 @@ int callbackGetAlbumList(void* data, int argc, char** argv, char** azColName)
 	myData.push_back(currAlbum);
 	return 0;
 }
+
+int callbackPrintAlbumsData(void* data, int argc, char** argv, char** azColName)
+{
+	if (argc == 2)
+	{
+		std::cout << "[" << argv[0] << "] -  by user " << argv[1];
+	}
+}
