@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include "IDataAccess.h"
 #include "sqlite3.h"
 #include <fstream>

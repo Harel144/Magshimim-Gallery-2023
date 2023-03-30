@@ -13,7 +13,7 @@ int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
 }
 
 /*
-this function sets data from the database on an Album object.
+this function sets data from the database into a given Album object.
 input: pointer to Album object, amount of columns, data of columns and name of columns.
 output: 0.
 */
@@ -39,6 +39,39 @@ int callbackGetAlbumData(void* data, int argc, char** argv, char** azColName)
 			}
 		}
 	}
+	return 0;
+}
+
+/*
+this function sets data from the database into a given Album list object.
+input: pointer to Album list object, amount of columns, data of columns and name of columns.
+output: 0.
+*/
+int callbackGetAlbumList(void* data, int argc, char** argv, char** azColName)
+{
+	std::list<Album>& myData = *(static_cast<std::list<Album>*>(data));
+
+	Album currAlbum;
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i] != nullptr)
+		{
+			if (strcmp(azColName[i], "USER_ID") == 0)
+			{
+				currAlbum.setOwner(std::atoi(argv[i]));
+			}
+			else if (strcmp(azColName[i], "NAME") == 0)
+			{
+				currAlbum.setName(std::string(argv[i]));
+			}
+			else if (strcmp(azColName[i], "CREATION_DATE") == 0)
+			{
+				currAlbum.setCreationDate(std::string(argv[i]));
+			}
+		}
+	}
+
+	myData.push_back(currAlbum);
 	return 0;
 }
 
@@ -195,6 +228,28 @@ bool DatabaseAccess::doesAlbumExists(const std::string& albumName, int userId)
 	return albumID == "";
 }
 
+/*
+this function returns the data of all the albums of a given user on std::list format.
+input: user to get the albums of.
+output: list of albums of given user.
+*/
+const std::list<Album> DatabaseAccess::getAlbumsOfUser(const User& user)
+{
+	int userID = user.getId();
+	std::string sqlStatement = "SELECT * FROM ALBUMS WHERE USER_ID = " + std::to_string(userID) + ";";
+	char** errMessage = nullptr;
+	std::list<Album> albums;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetAlbumList, &albums, errMessage);
+	
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get albums of " << user.getName() << "!" << std::endl;
+		return;
+	}
+
+	return albums;
+}
 
 /*==============================\
 							     |
@@ -223,7 +278,7 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 
 	if (res != SQLITE_OK)
 	{
-		std::cerr << "Error! couldn't get id of " << albumName << "!, " << std::endl;
+		std::cerr << "Error! couldn't get id of " << albumName << "!" << std::endl;
 		return;
 	}
 
