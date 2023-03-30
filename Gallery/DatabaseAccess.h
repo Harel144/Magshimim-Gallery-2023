@@ -3,6 +3,7 @@
 #include "IDataAccess.h"
 #include "sqlite3.h"
 #include <fstream>
+#include "callbackFuncs.h"
 
 class DatabaseAccess : public IDataAccess
 {
