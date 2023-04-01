@@ -361,6 +361,12 @@ void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const
 		return;
 	}
 
+	if (albumID == "")
+	{
+		std::cerr << "Error! Album isn't exist!" << std::endl;
+		return;
+	}
+
 	sqlStatement = "INSERT INTO PICTURES(NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES ('" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
 
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
@@ -368,6 +374,43 @@ void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't add picture to album!" << std::endl;
+	}
+
+}
+
+/*
+this function removes a picture from the database with the name of the
+album of the picture and the name of the picture.
+input: picture's album's name, picture's name.
+output: none.
+*/
+void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName) 
+{
+	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' LIMIT 1;";
+	char** errMessage = nullptr;
+	std::string albumID = "";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get album id!" << std::endl;
+		return;
+	}
+	
+	if (albumID == "")
+	{
+		std::cerr << "Error! Album isn't exist!" << std::endl;
+		return;
+	}
+
+	sqlStatement = "DELETE FROM PICTURES WHERE ALBUM_ID = " + albumID + " AND NAME = '" + pictureName + "';";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't remove picture from album!" << std::endl;
 	}
 
 }
