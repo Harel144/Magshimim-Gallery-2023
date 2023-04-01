@@ -435,9 +435,22 @@ User DatabaseAccess::getUser(int userId)
 
 }
 
+/*
+this function creates a user at USERS table at the database.
+input: user object.
+output: none.
+*/
 void DatabaseAccess::createUser(User& user)
 {
+	std::string sqlStatement = "INSERT INTO USERS(NAME) VALUES('" + user.getName() + "');";
+	char** errMessage = nullptr;
 
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+	}
 }
 
 void DatabaseAccess::deleteUser(const User& user)
@@ -454,9 +467,9 @@ bool DatabaseAccess::doesUserExists(int userId)
 {
 	std::string sqlStatement = "SELECT ID FROM USERS WHERE ID = " + std::to_string(userId) + ";";
 	char** errMessage = nullptr;
-	std::string albumID = "";
+	std::string userID = "";
 
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &userID, errMessage);
 
 	if (res != SQLITE_OK)
 	{
@@ -464,5 +477,5 @@ bool DatabaseAccess::doesUserExists(int userId)
 		return false;
 	}
 
-	return albumID == "";
+	return userID == "";
 }
