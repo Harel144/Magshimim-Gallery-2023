@@ -341,3 +341,33 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 		std::cout << "Untagged user at picture succsesfully!" << std::endl;
 	}
 }
+
+/*
+this function inserts picture to the database with the picture's album's name.
+input: picture's album's name, picture object with picture data.
+output: none.
+*/
+void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const Picture& picture)
+{
+	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' LIMIT 1;";
+	char** errMessage = nullptr;
+	std::string albumID;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get album id!" << std::endl;
+		return;
+	}
+
+	sqlStatement = "INSERT INTO PICTURES(NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES ('" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't add picture to album!" << std::endl;
+	}
+
+}
