@@ -49,5 +49,6 @@ class DatabaseAccess : public IDataAccess
 
 private:
 	sqlite3* _db;
+	std::list<Album> _openAlbums;
 
 };

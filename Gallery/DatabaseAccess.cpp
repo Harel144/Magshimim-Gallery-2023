@@ -104,7 +104,12 @@ output: none.
 */
 void DatabaseAccess::closeAlbum(Album& pAlbum)
 {
-	delete &pAlbum;
+	for (auto iter = this->_openAlbums.begin(); iter != this->_openAlbums.end(); iter++) {
+		if (iter->getName() == pAlbum.getName() && iter->getOwnerId() == pAlbum.getOwnerId()) {
+			iter = this->_openAlbums.erase(iter);
+			return;
+		}
+	}
 }
 
 /*
@@ -189,6 +194,40 @@ void DatabaseAccess::printAlbums()
 	}
 }
 
+Album DatabaseAccess::openAlbum(const std::string& albumName)
+{
+	std::string sqlStatement = "SELECT * FROM ALBUMS WHERE NAME = '" + albumName + "' LIMIT 1; ";
+	char** errMessage = nullptr;
+
+	Album* newAl = new Album();
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetAlbumData, newAl, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't print albums!" << std::endl;
+	}
+}
+
+/*
+this function returns all of the albums's data in the database.
+input: none.
+output: all the albums's data in the database at the format of std::list<Album>.
+*/
+const std::list<Album> DatabaseAccess::getAlbums()
+{
+	std::string sqlStatement = "SELECT * FROM ALBUMS;";
+	char** errMessage = nullptr;
+	std::list<Album> albums;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetAlbumList, &albums, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't get albums!" << std::endl;
+	}
+
+	return albums;
+}
 
 /*==============================\
 							     |
