@@ -181,6 +181,11 @@ const std::list<Album> DatabaseAccess::getAlbumsOfUser(const User& user)
 	return albums;
 }
 
+/*
+this function prints data about all of the albums from the database.
+input: none.
+output: none.
+*/
 void DatabaseAccess::printAlbums()
 {
 	std::string sqlStatement = "SELECT ALBUMS.NAME, USERS.NAME FROM ALBUMS INNER JOIN USERS ON ALBUMS.USER_ID = USERS.ID;";
@@ -194,6 +199,11 @@ void DatabaseAccess::printAlbums()
 	}
 }
 
+/*
+this function takes data from the database and inserts it to an album object in the field _openAlbums.
+input: album to open.
+output: album object with the data of the requested album.
+*/
 Album DatabaseAccess::openAlbum(const std::string& albumName)
 {
 	std::string sqlStatement = "SELECT * FROM ALBUMS WHERE NAME = '" + albumName + "' LIMIT 1; ";
@@ -425,9 +435,23 @@ void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, 
 \=============================*/
 
 
+/*
+this function prints data about all of the users from the database.
+input: none.
+output: none.
+*/
 void DatabaseAccess::printUsers()
 {
+	std::string sqlStatement = "SELECT NAME FROM USERS;";
+	char** errMessage = nullptr;
 
+	std::cout << "USER LIST:" << std::endl << "==========" << std::endl;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackPrintUserData, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't print albums!" << std::endl;
+	}
 }
 
 User DatabaseAccess::getUser(int userId)

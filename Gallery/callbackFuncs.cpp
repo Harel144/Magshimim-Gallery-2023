@@ -1,6 +1,6 @@
 #include "callbackFuncs.h"
-#include <Album.h>
-#include <User.h>
+#include "Album.h"
+#include "User.h"
 #include <list>
 #include <string>
 
@@ -84,5 +84,13 @@ int callbackPrintAlbumsData(void* data, int argc, char** argv, char** azColName)
 	if (argc == 2)
 	{
 		std::cout << "[" << argv[0] << "] -  by user " << argv[1];
+	}
+}
+
+int callbackPrintUserData(void* data, int argc, char** argv, char** azColName)
+{
+	if (argc == 1)
+	{
+		std::cout << " - " << argv[1];
 	}
 }
