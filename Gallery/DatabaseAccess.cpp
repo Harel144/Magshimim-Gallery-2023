@@ -229,11 +229,13 @@ const std::list<Album> DatabaseAccess::getAlbums()
 	return albums;
 }
 
+
 /*==============================\
 							     |
 	PICTURES RELATED FUNCTIONS   |
 							     |
 \==============================*/
+
 
 /*
 this function adds values to the TAGS table (aka tagging a user on a picture).
@@ -413,4 +415,54 @@ void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, 
 		std::cerr << "Error! couldn't remove picture from album!" << std::endl;
 	}
 
+}
+
+
+/*=============================\
+							   |
+	  USER RELATED FUNCTIONS   |
+							   |
+\=============================*/
+
+
+void DatabaseAccess::printUsers()
+{
+
+}
+
+User DatabaseAccess::getUser(int userId)
+{
+
+}
+
+void DatabaseAccess::createUser(User& user)
+{
+
+}
+
+void DatabaseAccess::deleteUser(const User& user)
+{
+
+}
+
+/*
+this function checks if user is exist in USERS table at the database.
+input: user id.
+output: true if the user exist and false otherwise.
+*/
+bool DatabaseAccess::doesUserExists(int userId)
+{
+	std::string sqlStatement = "SELECT ID FROM USERS WHERE ID = " + std::to_string(userId) + ";";
+	char** errMessage = nullptr;
+	std::string albumID = "";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+		return false;
+	}
+
+	return albumID == "";
 }
