@@ -514,9 +514,67 @@ void DatabaseAccess::createUser(User& user)
 	}
 }
 
+/*
+this function deletes user from the data base including every related data to him.
+input: user object.
+output: none.
+*/
 void DatabaseAccess::deleteUser(const User& user)
 {
+	std::string userId = std::to_string(user.getId());
+	std::string sqlStatement = "BEGIN;";
+	char** errMessage = nullptr;
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
 
+	sqlStatement = "DELETE FROM TAGS WHERE USER_ID = " + userId + ";";
+
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at deleting user tags from sql database." << std::endl;
+		sqlStatement = "ROLLBACK;";
+		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+		return;
+	}
+
+	sqlStatement = "DELETE FROM PICTURES WHERE ALBUM_ID = (SELECT ID FROM ALBUMS WHERE USER_ID = " + userId +");";
+
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at deleting user pictures from sql database." << std::endl;
+		sqlStatement = "ROLLBACK;";
+		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+		return;
+	}
+
+	sqlStatement = "DELETE FROM ALBUMS WHERE USER_ID = " + userId + ";";
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at deleting user albums from sql database." << std::endl;
+		sqlStatement = "ROLLBACK;";
+		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+		return;
+	}
+
+	sqlStatement = "DELETE FROM USERS WHERE ID = " + userId + ";";
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at deleting user from sql database." << std::endl;
+		sqlStatement = "ROLLBACK;";
+		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+	}
+	else
+	{
+		sqlStatement = "COMMIT;";
+		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+	}
 }
 
 /*
