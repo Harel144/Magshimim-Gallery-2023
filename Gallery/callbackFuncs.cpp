@@ -122,8 +122,8 @@ int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
 }
 
 /*
-this function sets data from the database into a given Album object.
-input: pointer to Album object, amount of columns, data of columns and name of columns.
+this function sets data from the database into a given User object.
+input: pointer to user object, amount of columns, data of columns and name of columns.
 output: 0.
 */
 int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
@@ -147,6 +147,11 @@ int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
 	return 0;
 }
 
+/*
+this function sets data from the database into a given picture object.
+input: pointer to picture object, amount of columns, data of columns and name of columns.
+output: 0.
+*/
 int callbackGetPictureData(void* data, int argc, char** argv, char** azColName)
 {
 	Picture* myData = static_cast<Picture*>(data);
@@ -174,5 +179,52 @@ int callbackGetPictureData(void* data, int argc, char** argv, char** azColName)
 		}
 	}
 
+	return 0;
+}
+
+/*
+this function sets the data from the data base into a Picture object
+and checking if it exist in given list. if not, the function adding
+the picture data into the list.
+input: pointer to picture list object, amount of columns, data of columns and name of columns.
+output: 0.
+*/
+int callbackGetPictureList(void* data, int argc, char** argv, char** azColName)
+{
+	std::list<Picture>& myData = *(static_cast<std::list<Picture>*>(data));
+	Picture* currPic = new Picture(0,"");
+
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i] != nullptr)
+		{
+			if (strcmp(azColName[i], "ID") == 0)
+			{
+				currPic->setId(std::atoi(argv[i]));
+			}
+			else if (strcmp(azColName[i], "NAME") == 0)
+			{
+				currPic->setName(std::string(argv[i]));
+			}
+			else if (strcmp(azColName[i], "CREATION_DATE") == 0)
+			{
+				currPic->setCreationDate(std::string(argv[i]));
+			}
+			else if (strcmp(azColName[i], "LOCATION") == 0)
+			{
+				currPic->setPath(std::string(argv[i]));
+			}
+		}
+	}
+
+	for (const auto& picture : myData)
+	{
+		if (picture.getId() == currPic->getId())
+		{
+			return 0;
+		}
+	}
+
+	myData.push_back(*currPic);
 	return 0;
 }

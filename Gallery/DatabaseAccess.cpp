@@ -761,3 +761,26 @@ Picture DatabaseAccess::getTopTaggedPicture()
 
 	return *newPic;
 }
+
+/*
+this function returns every picture of given user who have a tag in.
+input: user object.
+output: list of pictures of the given user with atleast 1 tag on them.
+*/
+std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
+{
+	std::string sqlStatement = "SELECT MAX(PICTURE_ID), PICTURES.NAME, PICTURES.LOCATION, PICTURES.CREATION_DATE, PICTURES.ALBUM_ID FROM TAGS INNER JOIN PICTURES ON PICTURES.ID = TAGS.PICTURE_ID;";
+	char** errMessage = nullptr;
+	std::list<Picture> newPics;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetPictureList, &newPics, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting picture data from sql database." << std::endl;
+		throw MyException("");
+	}
+
+	return newPics;
+
+}
