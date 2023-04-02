@@ -739,3 +739,25 @@ User DatabaseAccess::getTopTaggedUser()
 
 	return *newUser;
 }
+
+/*
+this function returns the picture with the most tags's data at Picture object.
+input: none.
+output: picture object with the data of the most tagged picture.
+*/
+Picture DatabaseAccess::getTopTaggedPicture()
+{
+	std::string sqlStatement = "SELECT MAX(PICTURE_ID), PICTURES.NAME, PICTURES.LOCATION, PICTURES.CREATION_DATE, PICTURES.ALBUM_ID FROM TAGS INNER JOIN PICTURES ON PICTURES.ID = TAGS.PICTURE_ID;";
+	char** errMessage = nullptr;
+	Picture* newPic = new Picture(-1, "");
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetPictureData, newPic, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting picture data from sql database." << std::endl;
+		throw MyException("");
+	}
+
+	return *newPic;
+}

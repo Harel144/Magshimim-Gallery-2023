@@ -146,3 +146,33 @@ int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
 	}
 	return 0;
 }
+
+int callbackGetPictureData(void* data, int argc, char** argv, char** azColName)
+{
+	Picture* myData = static_cast<Picture*>(data);
+
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i] != nullptr)
+		{
+			if (strcmp(azColName[i], "ID") == 0)
+			{
+				myData->setId(std::atoi(argv[i]));
+			}
+			else if (strcmp(azColName[i], "NAME") == 0)
+			{
+				myData->setName(std::string(argv[i]));
+			}
+			else if (strcmp(azColName[i], "CREATION_DATE") == 0)
+			{
+				myData->setCreationDate(std::string(argv[i]));
+			}
+			else if (strcmp(azColName[i], "LOCATION") == 0)
+			{
+				myData->setPath(std::string(argv[i]));
+			}
+		}
+	}
+
+	return 0;
+}
