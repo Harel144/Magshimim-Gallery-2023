@@ -717,3 +717,25 @@ float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
 
 	return static_cast<float>(countTagsOfUser(user)) / albumsTaggedCount;
 }
+
+/*
+this function returns the user with the most tags.
+input: none.
+output: user object with data of the top user tagged.
+*/
+User DatabaseAccess::getTopTaggedUser()
+{
+	std::string sqlStatement = "SELECT MAX(USER_ID), USERS.NAME FROM TAGS INNER JOIN USERS ON USERS.ID = TAGS.USER_ID;";
+	char** errMessage = nullptr;
+	User* newUser = new User(-1,"");
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetUserData, newUser, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+		throw MyException("");
+	}
+
+	return *newUser;
+}
