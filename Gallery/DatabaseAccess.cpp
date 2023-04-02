@@ -609,3 +609,36 @@ bool DatabaseAccess::doesUserExists(int userId)
 
 	return userID == "";
 }
+
+
+/*=============================\
+                               |
+		USER STATISTICS		   |
+	   RELATED FUNCTIONS       |
+							   |
+\=============================*/
+
+
+/*
+this function returns how much albums a given user got.
+input: user to check how much albums he got.
+output: amount of albums of given user.
+*/
+int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
+{
+	std::string userId = std::to_string(user.getId());
+
+	std::string sqlStatement = "SELECT COUNT(USER_ID) FROM ALBUMS WHERE USER_ID = " + userId + ";";
+	char** errMessage = nullptr;
+	std::string counter = "-1";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &counter, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+		return -1;
+	}
+
+	return std::atoi(counter.c_str());
+}
