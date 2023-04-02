@@ -514,6 +514,11 @@ output: none.
 */
 void DatabaseAccess::createUser(User& user)
 {
+	if (doesUserExists(user.getId()))
+	{
+		throw MyException("Error! User already exist!");
+	}
+
 	std::string sqlStatement = "INSERT INTO USERS(NAME) VALUES('" + user.getName() + "');";
 	char** errMessage = nullptr;
 
@@ -532,6 +537,11 @@ output: none.
 */
 void DatabaseAccess::deleteUser(const User& user)
 {
+	if (!doesUserExists(user.getId()))
+	{
+		throw MyException("Error! User doesn't exist!");
+	}
+
 	std::string userId = std::to_string(user.getId());
 	std::string sqlStatement = "BEGIN;";
 	char** errMessage = nullptr;
@@ -666,4 +676,44 @@ int DatabaseAccess::countAlbumsTaggedOfUser(const User & user)
 
 	return std::atoi(counter.c_str());
 
+}
+
+/*
+this function returns how much tags a given user have in the entire database.
+input: user object.
+output: amount of tags.
+*/
+int DatabaseAccess::countTagsOfUser(const User& user)
+{
+	std::string userId = std::to_string(user.getId());
+	std::string sqlStatement = " SELECT COUNT(ID) FROM TAGS WHERE USER_ID = " + userId + ";";
+	char** errMessage = nullptr;
+	std::string counter = "-1";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &counter, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+		return -1;
+	}
+
+	return std::atoi(counter.c_str());
+}
+
+/*
+this function returns the average tags of given user per album.
+input: user object.
+output: average tags of given user per album.
+*/
+float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
+{
+	int albumsTaggedCount = countAlbumsTaggedOfUser(user);
+
+	if (0 == albumsTaggedCount)
+	{
+		return 0;
+	}
+
+	return static_cast<float>(countTagsOfUser(user)) / albumsTaggedCount;
 }

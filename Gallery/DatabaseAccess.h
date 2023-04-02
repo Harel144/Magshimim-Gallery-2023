@@ -4,6 +4,7 @@
 #include "sqlite3.h"
 #include <fstream>
 #include "callbackFuncs.h"
+#include "MyException.h"
 
 class DatabaseAccess : public IDataAccess
 {
