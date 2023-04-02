@@ -58,10 +58,21 @@ output: none.
 */
 void DatabaseAccess::close()
 {
+	clear();
 	sqlite3_close(this->_db);
 	this->_db = nullptr;
 }
 
+/*
+This function deletes all of the objects the program created.
+input: none.
+output: none.
+*/
+void DatabaseAccess::clear()
+{
+	this->_openAlbums.clear();
+	this->_openUsers.clear();
+}
 
 /*============================\
 							  |
