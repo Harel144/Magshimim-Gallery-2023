@@ -642,3 +642,28 @@ int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
 
 	return std::atoi(counter.c_str());
 }
+
+/*
+this function counts on how much albums have a picture with the given user tagged.
+input: user object.
+output: on how much albums he got tagged.
+*/
+int DatabaseAccess::countAlbumsTaggedOfUser(const User & user)
+{
+	std::string userId = std::to_string(user.getId());
+
+	std::string sqlStatement = " SELECT COUNT(ALBUMS.ID) FROM ALBUMS INNER JOIN PICTURES ON ALBUMS.ID = PICTURES.ALBUM_ID INNER JOIN TAGS ON PICTURES.ID = TAGS.PICTURE_ID WHERE TAGS.USER_ID = " + userId + ";";
+	char** errMessage = nullptr;
+	std::string counter = "-1";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &counter, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting user data from sql database." << std::endl;
+		return -1;
+	}
+
+	return std::atoi(counter.c_str());
+
+}

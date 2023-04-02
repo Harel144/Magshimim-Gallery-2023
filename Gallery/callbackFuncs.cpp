@@ -12,7 +12,7 @@ output: 0.
 int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
 {
 	std::string* strData = static_cast<std::string*>(data);
-	*strData = argv[0];
+	*strData = std::string(argv[0]);
 	return 0;
 }
 
