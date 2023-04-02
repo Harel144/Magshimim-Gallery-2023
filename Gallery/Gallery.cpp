@@ -4,7 +4,7 @@
 #include "AlbumManager.h"
 #include <ctime>
 #include <sstream>
-
+#include "DatabaseAccess.h"
 
 void printMenu();
 std::string getPaddedNumber(const int num, const int digits);
@@ -36,7 +36,7 @@ int getCommandNumberFromUser()
 int main(void)
 {
 	// initialization data access
-	MemoryAccess dataAccess;
+	DatabaseAccess dataAccess;
 
 	// initialize album manager
 	AlbumManager albumManager(dataAccess);

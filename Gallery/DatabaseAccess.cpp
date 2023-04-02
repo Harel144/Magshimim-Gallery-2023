@@ -403,13 +403,12 @@ void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const
 
 	sqlStatement = "INSERT INTO PICTURES(NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES ('" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
 
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
 
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't add picture to album!" << std::endl;
 	}
-
 }
 
 /*
@@ -440,13 +439,12 @@ void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, 
 
 	sqlStatement = "DELETE FROM PICTURES WHERE ALBUM_ID = " + albumID + " AND NAME = '" + pictureName + "';";
 
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
 
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't remove picture from album!" << std::endl;
 	}
-
 }
 
 
@@ -519,7 +517,7 @@ void DatabaseAccess::createUser(User& user)
 		throw MyException("Error! User already exist!");
 	}
 
-	std::string sqlStatement = "INSERT INTO USERS(NAME) VALUES('" + user.getName() + "');";
+	std::string sqlStatement = "INSERT INTO USERS(NAME, ID) VALUES('" + user.getName() + "'," + std::to_string(user.getId()) + "); ";
 	char** errMessage = nullptr;
 
 	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
@@ -617,7 +615,7 @@ bool DatabaseAccess::doesUserExists(int userId)
 		return false;
 	}
 
-	return userID == "";
+	return userID != "";
 }
 
 
