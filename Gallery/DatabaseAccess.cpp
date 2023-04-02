@@ -167,7 +167,7 @@ bool DatabaseAccess::doesAlbumExists(const std::string& albumName, int userId)
 		return false;
 	}
 
-	return albumID == "";
+	return albumID != "";
 }
 
 /*
