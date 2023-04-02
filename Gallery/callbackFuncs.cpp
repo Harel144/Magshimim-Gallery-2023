@@ -94,3 +94,55 @@ int callbackPrintUserData(void* data, int argc, char** argv, char** azColName)
 		std::cout << " - " << argv[1];
 	}
 }
+
+/*
+this function sets data from the database into a given Album object.
+input: pointer to Album object, amount of columns, data of columns and name of columns.
+output: 0.
+*/
+int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
+{
+	User* myData = static_cast<User*>(data);
+
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i] != nullptr)
+		{
+			if (strcmp(azColName[i], "ID") == 0)
+			{
+				myData->setId(std::atoi(argv[i]));
+			}
+			else if (strcmp(azColName[i], "NAME") == 0)
+			{
+				myData->setName(std::string(argv[i]));
+			}
+		}
+	}
+	return 0;
+}
+
+/*
+this function sets data from the database into a given Album object.
+input: pointer to Album object, amount of columns, data of columns and name of columns.
+output: 0.
+*/
+int callbackGetUserData(void* data, int argc, char** argv, char** azColName)
+{
+	User* myData = static_cast<User*>(data);
+
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i] != nullptr)
+		{
+			if (strcmp(azColName[i], "ID") == 0)
+			{
+				myData->setId(std::atoi(argv[i]));
+			}
+			else if (strcmp(azColName[i], "NAME") == 0)
+			{
+				myData->setName(std::string(argv[i]));
+			}
+		}
+	}
+	return 0;
+}

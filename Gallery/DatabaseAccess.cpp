@@ -214,8 +214,19 @@ Album DatabaseAccess::openAlbum(const std::string& albumName)
 
 	if (res != SQLITE_OK)
 	{
-		std::cerr << "Error! couldn't print albums!" << std::endl;
+		std::cerr << "Error! couldn't open album!" << std::endl;
 	}
+
+	if (newAl->getName() == "")
+	{
+		std::cerr << "Error! album isn't exist!" << std::endl;
+	}
+	else
+	{
+		this->_openAlbums.push_back(*newAl);
+	}
+
+	return *newAl;
 }
 
 /*
@@ -454,9 +465,35 @@ void DatabaseAccess::printUsers()
 	}
 }
 
+/*
+this function gets user data from the database and inserting it into an User object and returning it.
+input: user id.
+output: user object with data of the user with that id.
+*/
 User DatabaseAccess::getUser(int userId)
 {
+	std::string sqlStatement = "SELECT * FROM USERS WHERE ID = " + std::to_string(userId) + ";";
+	char** errMessage = nullptr;
 
+	User* newUser = new User(-1, "");
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetUserData, newUser, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error! couldn't print albums!" << std::endl;
+	}
+
+	if (newUser->getId() == -1)
+	{
+		std::cerr << "Error! user doesn't exist!" << std::endl;
+	}
+	else
+	{
+		this->_openUsers.push_back(*newUser);
+	}
+
+	return *newUser;
 }
 
 /*
