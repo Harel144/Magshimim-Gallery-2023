@@ -11,7 +11,7 @@ output: 0.
 */
 int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
 {
-	if (argv[0] != nullptr && argc != 0)
+	if (argv[0] != nullptr && argc > 0)
 	{
 		std::string* strData = static_cast<std::string*>(data);
 		*strData = std::string(argv[0]);

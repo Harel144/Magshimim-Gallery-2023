@@ -34,7 +34,7 @@ bool DatabaseAccess::open()
 	if (file_exist != 0)
 	{
 		const char* sqlStatement = "CREATE TABLE IF NOT EXISTS Users(ID int PRIMARY KEY, NAME TEXT);"
-			"CREATE TABLE IF NOT EXISTS Albums(ID int PRIMARY KEY, NAME TEXT, CREATION_DATE TEXT, USER_ID int, FOREIGN KEY(USER_ID) REFERENCES USERS(ID));"
+			"CREATE TABLE IF NOT EXISTS Albums(ID int NOT NULL AUTO_INCREMENT, NAME TEXT, CREATION_DATE TEXT, USER_ID int, FOREIGN KEY(USER_ID) REFERENCES USERS(ID));"
 			"CREATE TABLE IF NOT EXISTS Pictures(ID int PRIMARY KEY, NAME TEXT, CREATION_DATE TEXT, LOCATION TEXT, ALBUM_ID int, FOREIGN KEY(ALBUM_ID) REFERENCES ALBUM(ID));"
 			"CREATE TABLE IF NOT EXISTS TAGS(ID int PRIMARY KEY, PICTURE_ID int, USER_ID int, FOREIGN KEY(PICTURE_ID) REFERENCES PICTURES(ID), FOREIGN KEY(USER_ID) REFERENCES USERS(ID));";
 
@@ -91,7 +91,7 @@ void DatabaseAccess::createAlbum(const Album & album)
 	std::string name = album.getName();
 	std::string creationDate = album.getCreationDate();
 	int ownerId = album.getOwnerId();
-
+	
 	if (doesAlbumExists(name, ownerId))
 	{
 		std::cerr << "Album is already exist!" << std::endl;
@@ -155,6 +155,7 @@ output: true if the album exist and false otherwise.
 */
 bool DatabaseAccess::doesAlbumExists(const std::string& albumName, int userId)
 {
+
 	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
 	char** errMessage = nullptr;
 	std::string albumID = "";
@@ -401,7 +402,7 @@ void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const
 		return;
 	}
 
-	sqlStatement = "INSERT INTO PICTURES(NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES ('" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
+	sqlStatement = "INSERT INTO PICTURES(ID, NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES (" + std::to_string(picture.getId()) + ",'" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
 
 	res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
 
