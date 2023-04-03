@@ -236,7 +236,13 @@ Album DatabaseAccess::openAlbum(const std::string& albumName)
 	else
 	{
 
-		//std::list<Picture>& pics = getAlbumPicture
+		std::list<Picture>& pics = getAlbumPicture(*newAl);
+
+		for (const auto& picture : pics)
+		{
+			newAl->addPicture(picture);
+		}
+
 		this->_openAlbums.push_back(*newAl);
 	}
 
