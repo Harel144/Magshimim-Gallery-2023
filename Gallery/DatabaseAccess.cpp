@@ -781,5 +781,26 @@ std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
 	}
 
 	return newPics;
+}
 
+/*
+this function gets all of the pictures of a given album's data and inserting it into std::list<Picture> object.
+input: album of pictures to get the data of.
+output: std::list<Picture> with the data of the pictures of the given album.
+*/
+std::list<Picture> DatabaseAccess::getAlbumPicture(const int albumID)
+{
+	std::string sqlStatement = "SELECT * FROM PICTURES WHERE ALBUM_ID = " + std::to_string(albumID) + ";";
+	char** errMessage = nullptr;
+	std::list<Picture> newPics;
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetPictureList, &newPics, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting picture data from sql database." << std::endl;
+		throw MyException("");
+	}
+
+	return newPics;
 }
