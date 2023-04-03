@@ -11,8 +11,11 @@ output: 0.
 */
 int returnFirstArgument(void* data, int argc, char** argv, char** azColName)
 {
-	std::string* strData = static_cast<std::string*>(data);
-	*strData = std::string(argv[0]);
+	if (argv[0] != nullptr && argc != 0)
+	{
+		std::string* strData = static_cast<std::string*>(data);
+		*strData = std::string(argv[0]);
+	}
 	return 0;
 }
 
@@ -83,7 +86,7 @@ int callbackPrintAlbumsData(void* data, int argc, char** argv, char** azColName)
 {
 	if (argc == 2)
 	{
-		std::cout << "[" << argv[0] << "] -  by user " << argv[1];
+		std::cout << "[" << argv[0] << "] -  by user " << argv[1] << std::endl;
 	}
 
 	return 0;
