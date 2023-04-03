@@ -235,6 +235,8 @@ Album DatabaseAccess::openAlbum(const std::string& albumName)
 	}
 	else
 	{
+
+		//std::list<Picture>& pics = getAlbumPicture
 		this->_openAlbums.push_back(*newAl);
 	}
 
@@ -788,13 +790,29 @@ this function gets all of the pictures of a given album's data and inserting it 
 input: album of pictures to get the data of.
 output: std::list<Picture> with the data of the pictures of the given album.
 */
-std::list<Picture> DatabaseAccess::getAlbumPicture(const int albumID)
+std::list<Picture> DatabaseAccess::getAlbumPicture(Album& album)
 {
-	std::string sqlStatement = "SELECT * FROM PICTURES WHERE ALBUM_ID = " + std::to_string(albumID) + ";";
+	if (!doesAlbumExists(album.getName(), album.getOwnerId()))
+	{
+		throw MyException("Error! Album doesn't exist!");
+	}
+
+	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + album.getName() + "' AND USER_ID = " + std::to_string(album.getOwnerId()) + ";";
 	char** errMessage = nullptr;
+	std::string albumID = "";
+
+	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), returnFirstArgument, &albumID, errMessage);
+
+	if (res != SQLITE_OK)
+	{
+		std::cerr << "Error at getting album id to get picture data from sql database." << std::endl;
+		throw MyException("");
+	}
+
+	sqlStatement = "SELECT * FROM PICTURES WHERE ALBUM_ID = " + albumID + ";";
 	std::list<Picture> newPics;
 
-	int res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetPictureList, &newPics, errMessage);
+	res = sqlite3_exec(this->_db, sqlStatement.c_str(), callbackGetPictureList, &newPics, errMessage);
 
 	if (res != SQLITE_OK)
 	{

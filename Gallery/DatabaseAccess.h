@@ -53,5 +53,5 @@ private:
 	std::list<Album> _openAlbums;
 	std::list<User> _openUsers;
 
-	std::list<Picture> getAlbumPicture(const int albumID);
+	std::list<Picture> getAlbumPicture(Album& album);
 };
