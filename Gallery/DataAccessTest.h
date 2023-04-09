@@ -11,5 +11,5 @@ public:
 	void deleteData();
 private:
 	sqlite3* _db;
-
+	bool openDb();
 };
