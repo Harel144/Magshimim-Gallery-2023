@@ -95,7 +95,7 @@ void DatabaseAccess::createAlbum(const Album & album)
 	if (doesAlbumExists(name, ownerId))
 	{
 		std::cerr << "Album is already exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	const std::string sqlStatement = "INSERT INTO ALBUMS(NAME, CREATION_DATE, USER_ID) VALUES('" + name + "','" + creationDate + "','" + std::to_string(ownerId) + "');";
@@ -118,7 +118,7 @@ void DatabaseAccess::closeAlbum(Album& pAlbum)
 	for (auto iter = this->_openAlbums.begin(); iter != this->_openAlbums.end(); iter++) {
 		if (iter->getName() == pAlbum.getName() && iter->getOwnerId() == pAlbum.getOwnerId()) {
 			iter = this->_openAlbums.erase(iter);
-			return;
+			throw MyException("");
 		}
 	}
 }
@@ -133,7 +133,7 @@ void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 	if (!doesAlbumExists(albumName, userId))
 	{
 		std::cerr << "Album isn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	const std::string sqlStatement = "DELETE FROM ALBUMS WHERE USER_ID = " + std::to_string(userId) + " AND NAME = " + albumName + ";";
@@ -288,7 +288,7 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	if (!doesAlbumExists(albumName, userId))
 	{
 		std::cerr << "Album doesn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
@@ -300,7 +300,7 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get id of " << albumName << "!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "SELECT ID FROM PICTURES WHERE NAME = '" + pictureName + "' AND ALBUM_ID = " +  albumID + ";";
@@ -311,13 +311,13 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	if (pictureID == "")
 	{
 		std::cerr << "Error! picture doesn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get id of " << pictureName << "!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "INSERT INTO TAGS(PICTURE_ID, USER_ID) VALUES( " +pictureID + ", " + std::to_string(userId) + ");";
@@ -339,7 +339,7 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 	if (!doesAlbumExists(albumName, userId))
 	{
 		std::cerr << "Album doesn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	std::string sqlStatement = "SELECT ID FROM ALBUMS WHERE NAME = '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
@@ -351,7 +351,7 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get id of " << albumName << "!, " << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "SELECT ID FROM PICTURES WHERE NAME = '" + pictureName + "' AND ALBUM_ID = " + albumID + ";";
@@ -362,13 +362,13 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 	if (pictureID == "")
 	{
 		std::cerr << "Error! picture doesn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get id of " << pictureName << "!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "DELETE FROM TAGS WHERE PICTURE_ID = " + pictureID + " AND USER_ID = " + std::to_string(userId) + ";";
@@ -401,13 +401,13 @@ void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get album id!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	if (albumID == "")
 	{
 		std::cerr << "Error! Album isn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "INSERT INTO PICTURES(ID, NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES (" + std::to_string(picture.getId()) + ",'" + picture.getName() + "', '" + picture.getPath() + "', '" + picture.getCreationDate() + "'," + albumID + ");";
@@ -437,13 +437,13 @@ void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, 
 	if (res != SQLITE_OK)
 	{
 		std::cerr << "Error! couldn't get album id!" << std::endl;
-		return;
+		throw MyException("");
 	}
 	
 	if (albumID == "")
 	{
 		std::cerr << "Error! Album isn't exist!" << std::endl;
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "DELETE FROM PICTURES WHERE ALBUM_ID = " + albumID + " AND NAME = '" + pictureName + "';";
@@ -563,7 +563,7 @@ void DatabaseAccess::deleteUser(const User& user)
 		std::cerr << "Error at deleting user tags from sql database." << std::endl;
 		sqlStatement = "ROLLBACK;";
 		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "DELETE FROM PICTURES WHERE ALBUM_ID = (SELECT ID FROM ALBUMS WHERE USER_ID = " + userId +");";
@@ -575,7 +575,7 @@ void DatabaseAccess::deleteUser(const User& user)
 		std::cerr << "Error at deleting user pictures from sql database." << std::endl;
 		sqlStatement = "ROLLBACK;";
 		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "DELETE FROM ALBUMS WHERE USER_ID = " + userId + ";";
@@ -586,7 +586,7 @@ void DatabaseAccess::deleteUser(const User& user)
 		std::cerr << "Error at deleting user albums from sql database." << std::endl;
 		sqlStatement = "ROLLBACK;";
 		res = sqlite3_exec(this->_db, sqlStatement.c_str(), nullptr, nullptr, errMessage);
-		return;
+		throw MyException("");
 	}
 
 	sqlStatement = "DELETE FROM USERS WHERE ID = " + userId + ";";

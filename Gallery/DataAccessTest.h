@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sqlite3.h"
+#include "DatabaseAccess.h"
 
 class DataAccessTest
 {
@@ -10,6 +11,5 @@ public:
 	void changeData();
 	void deleteData();
 private:
-	sqlite3* _db;
-	bool openDb();
+	DatabaseAccess _dbAccess;
 };
