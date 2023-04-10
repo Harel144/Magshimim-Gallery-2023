@@ -28,9 +28,9 @@ void DataAccessTest::addData()
 	User* firstUser = new User(1000,"Harel");
 	User* secondUser = new User(1001, "Dvir");
 	User* thirdUser = new User(1002, "Guy");
-	Album* firstAl = new Album(900, "My Time");
-	Album* secAl = new Album(901, "My Friend");
-	Album* thirdAl = new Album(902, "Me");
+	Album* firstAl = new Album(1000, "My Time");
+	Album* secAl = new Album(1001, "My Friend");
+	Album* thirdAl = new Album(1002, "Me");
 	Picture* firstPic = new Picture(801, "My first picture");
 	Picture* secPic = new Picture(802, "My second picture");
 	Picture* thirdPic = new Picture(803, "My third picture");
@@ -80,17 +80,53 @@ void DataAccessTest::addData()
 	this->_dbAccess.close();
 }
 
+/*
+this function adds an user, an album and a picture to the database and rename the picture.
+input: none.
+output: none.
+*/
 void DataAccessTest::changeData()
 {
 	this->_dbAccess.open();
+	Album* firstAl = new Album(1000, "My Time");
+	Picture* firstPic = new Picture(851, "My Femily");
+	User* firstUser = new User(1000, "Harel");
+	
+	sqlite3* db;
+	std::string dbFileName = "Gallery.sqlite";
+
+	int res = sqlite3_open(dbFileName.c_str(), &db);
+
+	if (res != SQLITE_OK)
+	{
+		db = nullptr;
+		std::cerr << "Failed to open DB." << std::endl;
+		return;
+	}
+
+	try
+	{
+		this->_dbAccess.createUser(*firstUser);
+		this->_dbAccess.createAlbum(*firstAl);
+		this->_dbAccess.addPictureToAlbumByName(firstAl->getName(), *firstPic);
+
+		const char* sqlStatement = "UPDATE PICTURES SET NAME = 'My Family' WHERE ID = 851";
+		char** errMessage = nullptr;
+
+		int res = sqlite3_exec(db,sqlStatement, nullptr, nullptr, errMessage);
+	}
+	catch (const MyException& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 
 	this->_dbAccess.close();
 }
 
 void DataAccessTest::deleteData()
 {
-
+	User* firstUser = new User(1000, "Harel");
 	this->_dbAccess.open();
-
+	this->_dbAccess.deleteUser(*firstUser);
 	this->_dbAccess.close();
 }

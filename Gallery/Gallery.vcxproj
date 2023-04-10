@@ -90,6 +90,7 @@
     <ClInclude Include="AlbumManager.h" />
     <ClInclude Include="AlbumNotOpenException.h" />
     <ClInclude Include="callbackFuncs.h" />
+    <ClInclude Include="DataAccessTest.h" />
     <ClInclude Include="DatabaseAccess.h" />
     <ClInclude Include="IDataAccess.h" />
     <ClInclude Include="ItemNotFoundException.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="Album.cpp" />
     <ClCompile Include="AlbumManager.cpp" />
     <ClCompile Include="callbackFuncs.cpp" />
+    <ClCompile Include="DataAccessTest.cpp" />
     <ClCompile Include="DatabaseAccess.cpp" />
     <ClCompile Include="MemoryAccess.cpp" />
     <ClCompile Include="Picture.cpp" />
