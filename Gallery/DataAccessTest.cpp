@@ -125,8 +125,8 @@ void DataAccessTest::changeData()
 
 void DataAccessTest::deleteData()
 {
-	User* firstUser = new User(1000, "Harel");
 	this->_dbAccess.open();
+	User* firstUser = new User(1000, "Harel");
 	this->_dbAccess.deleteUser(*firstUser);
 	this->_dbAccess.close();
 }
