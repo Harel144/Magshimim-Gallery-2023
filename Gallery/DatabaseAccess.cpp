@@ -505,6 +505,7 @@ User DatabaseAccess::getUser(int userId)
 	if (newUser->getId() == -1)
 	{
 		std::cerr << "Error! user doesn't exist!" << std::endl;
+		throw MyException("");
 	}
 	else
 	{

@@ -23,7 +23,22 @@ void DataAccessTest::addData()
 {
 
 	this->_dbAccess.open();
+	
+	User* firstUser = new User(1000,"Harel");
+	User* secondUser = new User(1001, "Dvir");
+	User* thirdUser = new User(1002, "Guy");
 
+	try
+	{
+		this->_dbAccess.createUser(*firstUser);
+		this->_dbAccess.createUser(*secondUser);
+		this->_dbAccess.createUser(*thirdUser);
+	}
+	catch (const MyException& e)
+	{
+		e.what();
+	}
+	
 	this->_dbAccess.close();
 }
 
