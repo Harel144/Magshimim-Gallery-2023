@@ -36,7 +36,7 @@ void DataAccessTest::addData()
 	}
 	catch (const MyException& e)
 	{
-		e.what();
+		std::cout << e.what() << std::endl;
 	}
 	
 	this->_dbAccess.close();
