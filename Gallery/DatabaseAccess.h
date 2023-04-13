@@ -5,6 +5,8 @@
 #include <fstream>
 #include "callbackFuncs.h"
 #include "MyException.h"
+#include "ItemNotFoundException.h"
+#include "AlbumNotOpenException.h"
 
 class DatabaseAccess : public IDataAccess
 {
